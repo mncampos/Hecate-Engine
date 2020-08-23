@@ -113,19 +113,20 @@ public class Main {
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_FRAMEBUFFER_SRGB);
+        Mesh mesh = new Mesh();
+        Vertex[] data = new Vertex[] {
+                new Vertex(new Vector3f(-1,-1, 0)),
+                new Vertex(new Vector3f(-1,1,0)),
+                new Vertex(new Vector3f(0,1,0)),};
+        mesh.addVertices(data);
 
         // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
         while ( !glfwWindowShouldClose(window) ) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
-            glBegin(GL_TRIANGLES);
-            glVertex3f(1,0,0);
-            glVertex3f(-1,0,0);
-            glVertex3f(0,-1,0);
-            glEnd();
 
-
+mesh.draw();
 
             glfwSwapBuffers(window); // swap the color buffers
 
