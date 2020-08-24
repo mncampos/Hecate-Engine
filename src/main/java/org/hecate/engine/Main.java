@@ -22,6 +22,7 @@ public class Main {
     private final int Width = 1280;
     public static final double FRAME_CAP = 5000.0;
     private Transform transform;
+    private Camera camera;
     private Shader shader;
 
 
@@ -119,15 +120,13 @@ public class Main {
         //glEnable(GL_CULL_FACE);
         //glEnable(GL_DEPTH_TEST);
         glEnable(GL_FRAMEBUFFER_SRGB);
-        Mesh mesh = new Mesh();
+        Mesh mesh = ResourceLoader.loadMesh("preulae.obj");
         shader = new Shader();
+        camera = new Camera();
 
-        Vertex[] data = new Vertex[] {
-                new Vertex(new Vector3f(1,0, 0)),
-                new Vertex(new Vector3f(-1,0,0)),
-                new Vertex(new Vector3f(0,1,0))
-        };
-        mesh.addVertices(data);
+
+
+
         shader.addVertexShader(ResourceLoader.loadShader("basicVertex.hvs"));
         shader.addFragmentShader(ResourceLoader.loadShader("basicFragment.hfrs"));
         shader.compileShader();
@@ -138,7 +137,10 @@ public class Main {
         int frames = 0;
         long frameCounter = 0;
         float temp = 0;
+        Transform.setProjection(70f, Width, Height, 0.1f, 1000);
+        Transform.setCamera(camera);
         transform = new Transform();
+
 
 
         // Run the rendering loop until the user has attempted to close
@@ -147,6 +149,10 @@ public class Main {
         while ( !glfwWindowShouldClose(window) ) {
             glClear(GL_COLOR_BUFFER_BIT); // clear the framebuffer
 
+            Time.setDelta(frameTime);
+
+
+
             long startTime = Time.getTime();
             long passedTime = startTime - lastTime;
             lastTime = startTime;
@@ -154,14 +160,18 @@ public class Main {
             frameCounter += passedTime;
 
             unprocessedTime -= frameTime;
-            //transform.setTranslation(0, (float)Math.cos(temp), 0);
-            transform.setRotation(0,0, (float)Math.sin(temp) * 360);
+            transform.setTranslation((float)Math.sin(temp), 0, 5);
+            //transform.setRotation(0,(float)Math.sin(temp) * 180, 0);
+            //transform.setScale((float)Math.sin(temp),Math.abs((float)Math.sin(temp)),(float)Math.sin(temp) );
 
 
 
 
+
+
+            camera.input(window);
             shader.bind();
-            shader.setUniform("transform", transform.getTransformation());
+            shader.setUniform("transform", transform.getProjectedTransformation());
             mesh.draw();
 
             if(frameCounter >= Time.SECOND)
@@ -179,6 +189,7 @@ public class Main {
             // Poll for window events. The key callback above will only be
             // invoked during this call.
             glfwPollEvents();
+
         }
 
 
