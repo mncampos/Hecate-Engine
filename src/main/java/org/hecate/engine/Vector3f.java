@@ -14,7 +14,7 @@ public class Vector3f {
 
     public float lenght()
     {
-        return (float)Math.sqrt(x * x+ y * y + z * z);
+        return (float)Math.sqrt(x * x + y * y + z * z);
     }
 
     public float dot(Vector3f r)
@@ -35,7 +35,7 @@ public class Vector3f {
 
     public Vector3f add(Vector3f r)
     {
-        return new Vector3f(x + r.getY(), y + r.getY(), z + r.getZ());
+        return new Vector3f(x + r.getX(), y + r.getY(), z + r.getZ());
     }
 
     public Vector3f add(float r)
@@ -45,7 +45,7 @@ public class Vector3f {
 
     public Vector3f sub(Vector3f r)
     {
-        return new Vector3f(x - r.getY(), y - r.getY(), z - r.getZ());
+        return new Vector3f(x - r.getX(), y - r.getY(), z - r.getZ());
     }
 
     public Vector3f sub(float r)
@@ -54,7 +54,7 @@ public class Vector3f {
     }
     public Vector3f mult(Vector3f r)
     {
-        return new Vector3f(x * r.getY(), y * r.getY(), z * r.getZ());
+        return new Vector3f(x * r.getX(), y * r.getY(), z * r.getZ());
     }
 
     public Vector3f mult(float r)
@@ -63,7 +63,7 @@ public class Vector3f {
     }
     public Vector3f div(Vector3f r)
     {
-        return new Vector3f(x / r.getY(), y / r.getY(), z / r.getZ());
+        return new Vector3f(x / r.getX(), y / r.getY(), z / r.getZ());
     }
 
     public Vector3f div(float r)
@@ -75,7 +75,7 @@ public class Vector3f {
     {
         float x_ = y * r.getZ() - z * r.getY();
         float y_ = z * r.getX() - x * r.getZ();
-        float z_ = x * getY() - y * r.getX();
+        float z_ = x * r.getY() - y * r.getX();
 
         return new Vector3f(x_, y_, z_);
     }

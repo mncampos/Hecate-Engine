@@ -47,7 +47,7 @@ public class Vector2f {
 
     public Vector2f add(Vector2f r)
     {
-        return new Vector2f(x + r.getY(), y + r.getY());
+        return new Vector2f(x + r.getX(), y + r.getY());
     }
 
     public Vector2f add(float r)
@@ -57,7 +57,7 @@ public class Vector2f {
 
     public Vector2f sub(Vector2f r)
     {
-        return new Vector2f(x - r.getY(), y - r.getY());
+        return new Vector2f(x - r.getX(), y - r.getY());
     }
 
     public Vector2f sub(float r)
@@ -67,7 +67,7 @@ public class Vector2f {
 
     public Vector2f mult(Vector2f r)
     {
-        return new Vector2f(x * r.getY(), y * r.getY());
+        return new Vector2f(x * r.getX(), y * r.getY());
     }
 
     public Vector2f mult(float r)
@@ -77,7 +77,7 @@ public class Vector2f {
 
     public Vector2f div(Vector2f r)
     {
-        return new Vector2f(x / r.getY(), y / r.getY());
+        return new Vector2f(x / r.getX(), y / r.getY());
     }
 
     public Vector2f div(float r)

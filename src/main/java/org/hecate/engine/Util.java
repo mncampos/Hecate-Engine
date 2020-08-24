@@ -4,6 +4,9 @@ import org.lwjgl.BufferUtils;
 
 import java.nio.FloatBuffer;
 
+import static org.lwjgl.opengl.GL11.GL_VERSION;
+import static org.lwjgl.opengl.GL11.glGetString;
+
 public class Util
 {
     public static FloatBuffer createFloatBuffer(int size)
@@ -22,9 +25,32 @@ public class Util
          buffer.put(vertices[i].getPos().getZ());
      }
 
+
+
      buffer.flip();
 
      return buffer;
 
     }
+
+    public static FloatBuffer createFlippedBuffer(Matrix4f value)
+    {
+         FloatBuffer buffer = createFloatBuffer(4 * 4);
+
+         for(int i = 0; i < 4; i++)
+             for(int j = 0; j < 4; j++)
+             {
+                 buffer.put(value.get(i,j));
+             }
+         buffer.flip();
+             return buffer;
+    }
+
+
+    public static String getOpenGLVersion()
+    {
+        return glGetString(GL_VERSION);
+    }
+
+
 }

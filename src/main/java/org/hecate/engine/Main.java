@@ -20,14 +20,15 @@ public class Main {
     //The screen size
     private final int Height = 768;
     private final int Width = 1280;
+    public static final double FRAME_CAP = 5000.0;
+    private Transform transform;
+    private Shader shader;
 
 
     //The window handle
     private long window;
 
     public void run() {
-        System.out.println("Hello LWJGL " + Version.getVersion() + "!");
-
 
         init();
         loop();
@@ -55,16 +56,19 @@ public class Main {
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 
+
         // Create the window
         window = glfwCreateWindow(Width, Height, "Hecate3D", NULL, NULL);
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
 
+
+
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.
         glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
             if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
                 glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
-        });
+             });
 
         // Get the thread stack and push a new frame
         try ( MemoryStack stack = stackPush() ) {
@@ -76,6 +80,8 @@ public class Main {
 
             // Get the resolution of the primary monitor
             GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+
 
             // Center the window
             assert vidmode != null;
@@ -107,40 +113,77 @@ public class Main {
         GL.createCapabilities();
 
         // Set the clear color
-        glClearColor(0.0f,0.0f,0.0f,0.0f);
-        glFrontFace(GL_CW);
-        glCullFace(GL_BACK);
-        glEnable(GL_CULL_FACE);
-        glEnable(GL_DEPTH_TEST);
+        glClearColor(0.0f,0.2f,0.3f,0.0f);
+        //glFrontFace(GL_CW);
+        //glCullFace(GL_BACK);
+        //glEnable(GL_CULL_FACE);
+        //glEnable(GL_DEPTH_TEST);
         glEnable(GL_FRAMEBUFFER_SRGB);
         Mesh mesh = new Mesh();
+        shader = new Shader();
+
         Vertex[] data = new Vertex[] {
-                new Vertex(new Vector3f(-1,-1, 0)),
-                new Vertex(new Vector3f(-1,1,0)),
-                new Vertex(new Vector3f(0,1,0)),};
+                new Vertex(new Vector3f(1,0, 0)),
+                new Vertex(new Vector3f(-1,0,0)),
+                new Vertex(new Vector3f(0,1,0))
+        };
         mesh.addVertices(data);
+        shader.addVertexShader(ResourceLoader.loadShader("basicVertex.hvs"));
+        shader.addFragmentShader(ResourceLoader.loadShader("basicFragment.hfrs"));
+        shader.compileShader();
+        shader.addUniform("transform");
+        long lastTime = Time.getTime();
+        double unprocessedTime = 0;
+        final double frameTime = 1.0 / FRAME_CAP;
+        int frames = 0;
+        long frameCounter = 0;
+        float temp = 0;
+        transform = new Transform();
+
 
         // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
+
         while ( !glfwWindowShouldClose(window) ) {
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
+            glClear(GL_COLOR_BUFFER_BIT); // clear the framebuffer
+
+            long startTime = Time.getTime();
+            long passedTime = startTime - lastTime;
+            lastTime = startTime;
+            unprocessedTime += passedTime / (double)Time.SECOND;
+            frameCounter += passedTime;
+
+            unprocessedTime -= frameTime;
+            //transform.setTranslation(0, (float)Math.cos(temp), 0);
+            transform.setRotation(0,0, (float)Math.sin(temp) * 360);
 
 
-mesh.draw();
+
+
+            shader.bind();
+            shader.setUniform("transform", transform.getTransformation());
+            mesh.draw();
+
+            if(frameCounter >= Time.SECOND)
+            {
+                System.out.println(frames);
+                frames = 0;
+                frameCounter = 0;
+            }
+            frames++;
+            temp += 0.01;
+
 
             glfwSwapBuffers(window); // swap the color buffers
 
             // Poll for window events. The key callback above will only be
             // invoked during this call.
             glfwPollEvents();
-
-
-
-
         }
 
 
     }
+
 
     public static void main(String[] args) {
         new Main().run();
