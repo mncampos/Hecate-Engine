@@ -1,5 +1,6 @@
 package org.hecate.engine;
 
+
 import java.util.HashMap;
 
 import static org.lwjgl.opengl.GL20.*;
@@ -20,6 +21,12 @@ public class Shader {
             System.err.println("Shader creation failed : Could not find valid memory location in constructor.");
             System.exit(1);
         }
+    }
+
+
+    public void updateUniforms(Matrix4f worldMatrix, Matrix4f projectedMatrix, Material material)
+    {
+
     }
 
     public void addUniform(String uniform)

@@ -20,12 +20,11 @@ public class Vector2f {
         return x * r.getX() + y * r.getY();
     }
 
-    public Vector2f normalize()
+    public Vector2f normalized()
     {
         float lenght = lenght();
-        x /= lenght;
-        y /= lenght;
-        return this;
+
+        return new Vector2f(x/ lenght, y / lenght);
     }
 
     public void setX(float x) {
@@ -83,6 +82,11 @@ public class Vector2f {
     public Vector2f div(float r)
     {
         return new Vector2f(x / r, y / r);
+    }
+
+    public Vector2f abs()
+    {
+        return new Vector2f(Math.abs(x), Math.abs(y));
     }
 
 

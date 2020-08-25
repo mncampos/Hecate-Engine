@@ -38,6 +38,11 @@ public class Vector3f {
 
     }
 
+    public Vector3f abs()
+    {
+        return new Vector3f(Math.abs(x), Math.abs(y), Math.abs(z));
+    }
+
     public float lenght()
     {
         return (float)Math.sqrt(x * x + y * y + z * z);
@@ -48,15 +53,11 @@ public class Vector3f {
         return x * r.getX() + y * r.getY() + z * r.getZ();
     }
 
-    public Vector3f normalize()
+    public Vector3f normalized()
     {
         float lenght = lenght();
 
-        x /= lenght;
-        y /= lenght;
-        z /= lenght;
-
-        return this;
+        return new Vector3f(x / lenght, y / lenght, z / lenght);
     }
 
     public Vector3f add(Vector3f r)

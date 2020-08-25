@@ -1,10 +1,63 @@
 package org.hecate.engine;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.stb.STBImage;
+import org.lwjgl.system.MemoryStack;
+
+import java.io.*;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
+import static org.lwjgl.opengl.GL11.*;
+
 
 public class ResourceLoader {
+
+
+    public static Texture loadTexture(String fileName){
+
+        String[] splitArray = fileName.split("\\.");
+        String ext = splitArray[splitArray.length - 1];
+
+
+        int id = glGenTextures();
+        Texture texture = new Texture(id);
+        texture.bind();
+        //set texture params
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        //load and generate the texture
+
+        IntBuffer width = BufferUtils.createIntBuffer(1);
+        IntBuffer height = BufferUtils.createIntBuffer(1);
+        IntBuffer nrChannels = BufferUtils.createIntBuffer(1);
+        STBImage.nstbi_set_flip_vertically_on_load(1);
+
+
+        ByteBuffer data = STBImage.stbi_load(fileName, width, height, nrChannels, 0);
+        if(data == null)
+        {
+            throw new RuntimeException("Failed to load texture file!" + System.lineSeparator() + STBImage.stbi_failure_reason());
+
+        }
+        int wid = width.get();
+        int heigh = height.get();
+
+
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, wid, heigh, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+
+
+
+        return texture;
+
+    }
+
+
     public static String loadShader(String fileName)
     {
         StringBuilder shaderSource = new StringBuilder();

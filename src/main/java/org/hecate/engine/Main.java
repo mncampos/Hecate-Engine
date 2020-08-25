@@ -24,6 +24,7 @@ public class Main {
     private Transform transform;
     private Camera camera;
     private Shader shader;
+    private Texture texture;
 
 
     //The window handle
@@ -62,6 +63,14 @@ public class Main {
         window = glfwCreateWindow(Width, Height, "Hecate3D", NULL, NULL);
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
+
+        // Change the cursor mode
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+
+
+       // Set a callback for when the cursor moves
+
 
 
 
@@ -115,14 +124,31 @@ public class Main {
 
         // Set the clear color
         glClearColor(0.0f,0.2f,0.3f,0.0f);
-        //glFrontFace(GL_CW);
-        //glCullFace(GL_BACK);
-        //glEnable(GL_CULL_FACE);
+        glFrontFace(GL_CW);
+        glCullFace(GL_BACK);
+        glEnable(GL_CULL_FACE);
         //glEnable(GL_DEPTH_TEST);
+        glEnable(GL_TEXTURE_2D);
         glEnable(GL_FRAMEBUFFER_SRGB);
-        Mesh mesh = ResourceLoader.loadMesh("preulae.obj");
+        Mesh mesh = new Mesh(); //ResourceLoader.loadMesh("untitled.obj"); //
+        texture = ResourceLoader.loadTexture("./res/textures/test.png");
         shader = new Shader();
         camera = new Camera();
+
+        Vertex[] vertices = new Vertex[]{
+                new Vertex(new Vector3f(-1,-1,0), new Vector2f(0,0)),
+                new Vertex(new Vector3f(0,1,0), new Vector2f(0.5f,0)),
+                new Vertex(new Vector3f(1,-1,0), new Vector2f(1.0f,0)),
+                new Vertex(new Vector3f(0,-1,1), new Vector2f(0.0f,0.5f))
+        };
+        int[] indices = new int[] {
+                3,1,0,
+                2,1,3,
+                0,1,2,
+                0,2,3
+        };
+
+        mesh.addVertices(vertices, indices);
 
 
 
@@ -171,6 +197,7 @@ public class Main {
 
             camera.input(window);
             shader.bind();
+
             shader.setUniform("transform", transform.getProjectedTransformation());
             mesh.draw();
 
@@ -182,6 +209,7 @@ public class Main {
             }
             frames++;
             temp += 0.01;
+
 
 
             glfwSwapBuffers(window); // swap the color buffers
