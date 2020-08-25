@@ -24,7 +24,7 @@ public class Main {
     private Transform transform;
     private Camera camera;
     private Shader shader;
-    private Texture texture;
+    private Material material;
 
 
     //The window handle
@@ -130,9 +130,9 @@ public class Main {
         //glEnable(GL_DEPTH_TEST);
         glEnable(GL_TEXTURE_2D);
         glEnable(GL_FRAMEBUFFER_SRGB);
+        shader = PhongShader.getInstance();
         Mesh mesh = new Mesh(); //ResourceLoader.loadMesh("untitled.obj"); //
-        texture = ResourceLoader.loadTexture("./res/textures/test.png");
-        shader = new Shader();
+        material = new Material(ResourceLoader.loadTexture("./res/textures/test.png"), new Vector3f(1,1,1));
         camera = new Camera();
 
         Vertex[] vertices = new Vertex[]{
@@ -153,10 +153,7 @@ public class Main {
 
 
 
-        shader.addVertexShader(ResourceLoader.loadShader("basicVertex.hvs"));
-        shader.addFragmentShader(ResourceLoader.loadShader("basicFragment.hfrs"));
-        shader.compileShader();
-        shader.addUniform("transform");
+
         long lastTime = Time.getTime();
         double unprocessedTime = 0;
         final double frameTime = 1.0 / FRAME_CAP;
@@ -166,6 +163,7 @@ public class Main {
         Transform.setProjection(70f, Width, Height, 0.1f, 1000);
         Transform.setCamera(camera);
         transform = new Transform();
+        PhongShader.setAmbientLight(new Vector3f(0.1f,0.1f,0.1f));
 
 
 
@@ -174,6 +172,7 @@ public class Main {
 
         while ( !glfwWindowShouldClose(window) ) {
             glClear(GL_COLOR_BUFFER_BIT); // clear the framebuffer
+
 
             Time.setDelta(frameTime);
 
@@ -186,8 +185,8 @@ public class Main {
             frameCounter += passedTime;
 
             unprocessedTime -= frameTime;
-            transform.setTranslation((float)Math.sin(temp), 0, 5);
-            //transform.setRotation(0,(float)Math.sin(temp) * 180, 0);
+            transform.setTranslation(1, 0, 5);
+            transform.setRotation(0,(float)Math.sin(temp) * 180, 0);
             //transform.setScale((float)Math.sin(temp),Math.abs((float)Math.sin(temp)),(float)Math.sin(temp) );
 
 
@@ -197,8 +196,9 @@ public class Main {
 
             camera.input(window);
             shader.bind();
+            shader.updateUniforms(transform.getTransformation(), transform.getProjectedTransformation(), material);
 
-            shader.setUniform("transform", transform.getProjectedTransformation());
+
             mesh.draw();
 
             if(frameCounter >= Time.SECOND)
