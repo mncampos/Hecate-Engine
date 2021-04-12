@@ -1,4 +1,3 @@
 # Hecate-Engine
- 3D engine attempt
- 
- <p>Powerful 3D engine.</p>
+Attempting to create a 3D engine using LWJGL, very very basic.
+
